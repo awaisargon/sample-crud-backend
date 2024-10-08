@@ -5,6 +5,7 @@ const {
   updateCar,
   deleteCar,
   getCarCount,
+  getCar,
 } = require('../controllers/carController');
 const { protect } = require('../middleware/auth');
 const validate = require('../middleware/validate');
@@ -85,6 +86,47 @@ router.post('/', validate(createCarValidation), createCar);
  */
 router.get('/', getCars);
 
+
+/**
+ * @swagger
+ * /cars/count:
+ *   get:
+ *     summary: Get number of cars
+ *     tags: [Cars]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Number of cars retrieved successfully
+ *       401:
+ *         description: Not authorized to access this route
+ */
+router.get('/count', getCarCount);
+
+
+/**
+ * @swagger
+ * /cars/{id}:
+ *   get:
+ *     summary: Get cars
+ *     tags: [Cars]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *         type: string
+ *         description: Car ID
+ *     responses:
+ *       200:
+ *         description: Car retrieved successfully
+ *       401:
+ *         description: Not authorized to access this route
+ */
+router.get('/:id', getCar);
+
 /**
  * @swagger
  * /cars/{id}:
@@ -156,20 +198,5 @@ router.patch('/:id', validate(updateCarValidation), updateCar);
  */
 router.delete('/:id', deleteCar);
 
-/**
- * @swagger
- * /cars/count:
- *   get:
- *     summary: Get number of cars
- *     tags: [Cars]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Number of cars retrieved successfully
- *       401:
- *         description: Not authorized to access this route
- */
-router.get('/count', getCarCount);
 
 module.exports = router;

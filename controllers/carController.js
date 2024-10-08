@@ -37,6 +37,18 @@ exports.getCars = asyncHandler(async (req, res) => {
   });
 });
 
+
+// @desc    Get single car
+// @route   GET /api/cars
+// @access  Private
+exports.getCar = asyncHandler(async (req, res) => {
+  const car = await Car.findById(req.params.id).populate('categoryId').lean();
+  res.status(httpStatus.OK).json({
+    success: true,
+    data: car,
+  });
+});
+
 // @desc    Update car
 // @route   PATCH /api/cars/:id
 // @access  Private
@@ -85,7 +97,6 @@ exports.deleteCar = asyncHandler(async (req, res) => {
 // @access  Private
 exports.getCarCount = asyncHandler(async (req, res) => {
   const count = await Car.countDocuments();
-
   res.status(httpStatus.OK).json({
     success: true,
     count,

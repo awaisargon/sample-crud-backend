@@ -18,15 +18,36 @@ connectDB();
 const app = express();
 
 // Set security headers
-app.use(helmet({
-  contentSecurityPolicy: false,
-  referrerPolicy: { policy: "no-referrer" },
-}));
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "trusted-cdn.com"],
+        styleSrc: ["'self'", "cdn.example.com"],
+        imgSrc: ["data:", "cdn.example.com"],
+        objectSrc: ["'none'"],
+        upgradeInsecureRequests: []
+      }
+    },
+    hsts: {
+      maxAge: 31536000, // 1 year in seconds
+      includeSubDomains: true,
+      preload: true
+    },
+    referrerPolicy: { policy: "same-origin" },
+    frameguard: { action: "deny" },
+    dnsPrefetchControl: { allow: false },
+    ieNoOpen: true,
+    noSniff: true,
+    hidePoweredBy: true
+  })
+);
 
 // Rate limiting
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 1000, // Limit each IP to 100 requests
   message: 'Too many requests, please try again later',
 });
 app.use('/api/', apiLimiter);
@@ -45,7 +66,7 @@ app.use(compression());
 
 // Enable CORS with domain restrictions
 const corsOptions = {
-  origin: ['http://localhost:3000'],  // Restrict to your domain
+  origin: [`${process.env.FRONTEND_URL}`],  // Restrict to your domain
   methods: 'GET,POST,PATCH,DELETE',
   credentials: true,
 };

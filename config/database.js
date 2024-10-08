@@ -11,8 +11,6 @@ const connectDB = async () => {
 
     // Connect to the database
     mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
       serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of the default 30s
       socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
     });
